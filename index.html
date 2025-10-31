@@ -1,124 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Portfolio</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f8f9fa;
-    }
-    header {
-      background: #343a40;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-    }
-    section {
-      padding: 40px;
-      max-width: 900px;
-      margin: auto;
-    }
-    h2 {
-      color: #343a40;
-    }
-    .projects {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-    .project-card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
-    }
-    footer {
-      text-align: center;
-      background: #343a40;
-      color: #fff;
-      padding: 20px;
-    }
-    .video-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    iframe {
-      width: 100%;
-      height: 200px;
-      border: none;
-      border-radius: 8px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Rwanda AI CV Assistant</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <header>
-    <h1>Derrick Kirezi</h1>
-    <p>Welcome to my Portfolio!</p>
-  </header>
 
-  <section id="about">
-    <h2>About Me</h2>
-    <p>Hello! I'm Derrick Kirezi, a UI/UX Designer. This is my portfolio website where you can learn more about me, see my projects, and get in touch.</p>
-  </section>
+<body class="bg-gray-50 flex flex-col items-center min-h-screen">
 
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="projects">
-      <div class="project-card">
-        <h3>DiTracker app design</h3>
-       
-        <iframe style="border:1px solid #ccc;" width="800" height="450" src="https://embed.figma.com/design/dxm2oHEWNJmKpVQjSlALdW/DiTracker-app?node-id=3-3&embed-host=share" allowfullscreen></iframe>
+<!-- Navbar -->
+<header class="w-full bg-white border-b py-4">
+  <div class="max-w-4xl mx-auto flex justify-between items-center px-4">
+    <h1 class="font-semibold text-xl">Rwanda Jobs AI</h1>
+    <button class="px-4 py-1 text-sm border rounded-md hover:bg-gray-100">Kinyarwanda</button>
+  </div>
+</header>
 
-      </div>
-      <div class="project-card">
-        <h3>An e-Commerce platform design</h3>
-        <iframe style="border:1px solid #ccc;" width="800" height="450" src="https://embed.figma.com/design/SO5bXF9Q06Zjh3KNoJdV9h/Untitled?node-id=89-4&embed-host=share" allowfullscreen></iframe>
-      </div>
-    </div>
-  </section>
+<!-- Container -->
+<div class="w-full max-w-2xl mx-auto py-10 px-4">
 
-  <section id="cv">
-    <h2>My CV</h2>
-    <p>You can view my CV here:</p>
-    <a href="cv.pdf" target="_blank">📄 View My CV</a>
-  </section>
-    <section id="cover">
-    <h2>Cover Letter</h2>
-    <p>You can view my Cover Letter here:</p>
-    <a href="cover.pdf" target="_blank">📄 View My Cover Letter</a>
-  </section>
+  <!-- Title -->
+  <h2 class="text-center text-3xl font-semibold mb-6">Create Your CV</h2>
+  <p class="text-center text-gray-600 mb-8">
+    Quick AI CV & job assistant for Rwanda 🇷🇼
+  </p>
 
-  <section id="videos">
-    <h2>My Videos</h2>
-    <div class="video-container">
-      <!-- Replace the src URLs with your own YouTube/Vimeo video links -->
-      <iframe src="https://www.youtube.com/embed/N-fKW887LnA?si=YQa-Up6DLCir0xD0"allowfullscreen></iframe>
-    </div>
-  </section>
+  <!-- Form -->
+  <form method="POST" class="space-y-4 bg-white p-6 rounded-xl shadow">
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Email: <a href="mailto:kireziderrick74@gmail.com">kireziderrick74@gmail.com</a></p>
-  </section>
+    <input name="name" required placeholder="Full Name" class="w-full border rounded-md px-3 py-2" />
 
-  <footer>
-    <p>&copy; 2025 My Portfolio</p>
-  </footer>
+    <input name="education" required placeholder="Education (e.g. UR, AUCA, TVET)" class="w-full border rounded-md px-3 py-2" />
 
-  <!-- Tidio Chatbot Script -->
-  <!-- Replace YOUR_UNIQUE_ID with the code from your Tidio account -->
-  <script src="//code.tidio.co/bfzvkzljodc1mv8n4a2w0ndk9ilwciqx.js" async></script>
+    <input name="skills" required placeholder="Skills (e.g. IT, accounting, communication)" class="w-full border rounded-md px-3 py-2" />
+
+    <textarea name="experience" placeholder="Work experience (optional)" class="w-full border rounded-md px-3 py-2 h-28"></textarea>
+
+    <input name="job" required placeholder="Job applying for (e.g. accountant)" class="w-full border rounded-md px-3 py-2" />
+
+    <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold transition">
+      Generate CV
+    </button>
+  </form>
+
+  <!-- Output -->
+  {% if result %}
+  <div class="bg-white p-6 rounded-xl shadow mt-10">
+    <h3 class="text-xl font-semibold mb-3">Result</h3>
+    <pre class="whitespace-pre-wrap text-gray-700">{{ result }}</pre>
+  </div>
+  {% endif %}
+
+</div>
+
 </body>
 </html>
-
-
-
-
-
-
-
