@@ -45,17 +45,26 @@
   </form>
 
   <!-- Output -->
-  {% if result %}
-  <div class="bg-white p-6 rounded-xl shadow mt-10">
-    <h3 class="text-xl font-semibold mb-3">Result</h3>
-    <pre class="whitespace-pre-wrap text-gray-700">{{ result }}</pre>
-  </div>
-  {% endif %}
+ {% if result %}
+<div class="bg-white p-6 rounded-xl shadow mt-10">
+  <h3 class="text-xl font-semibold mb-3">Result</h3>
+  <pre class="whitespace-pre-wrap text-gray-700">{{ result }}</pre>
+
+  <form action="/download" method="POST">
+    <input type="hidden" name="pdf_content" value="{{ result }}">
+    <button class="mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md">
+      Download CV as PDF
+    </button>
+  </form>
+</div>
+{% endif %}
+
 
 </div>
 
 </body>
 </html>
+
 
 
 
