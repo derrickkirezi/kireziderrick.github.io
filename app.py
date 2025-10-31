@@ -7,11 +7,51 @@ import io
 app = Flask(__name__)
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Modern CV class
+class ModernCVPDF(FPDF):
+    def header(self):
+        # Top banner
+        self.set_fill_color(0, 102, 204)  # Blue
+        self.rect(0, 0, 210, 20, 'F')
+
+    def name_header(self, name, job_title):
+        self.set_y(5)
+        self.set_text_color(255, 255, 255)
+        self.set_font("Arial", "B", 18)
+        self.cell(0, 10, name, ln=True, align="C")
+        self.set_font("Arial", "I", 12)
+        self.cell(0, 10, job_title, ln=True, align="C")
+        self.ln(10)
+        self.set_text_color(0, 0, 0)
+
+    def section_title(self, title):
+        self.set_font("Arial", "B", 14)
+        self.set_text_color(0, 51, 102)
+        self.cell(0, 8, title, ln=True)
+        self.ln(2)
+
+    def section_body(self, body):
+        self.set_font("Arial", "", 12)
+        for line in body.split("\n"):
+            self.multi_cell(0, 7, line)
+        self.ln(4)
+
+    def skills_column(self, skills_list):
+        self.set_font("Arial", "", 12)
+        col_width = 90
+        x_start = self.get_x()
+        y_start = self.get_y()
+        for i, skill in enumerate(skills_list):
+            x = x_start + (i % 2) * col_width
+            y = y_start + (i // 2) * 7
+            self.set_xy(x, y)
+            self.cell(col_width, 7, f"• {skill}")
+        self.ln((len(skills_list)+1)//2 * 7 + 4)
+
+# Home page
 @app.route("/", methods=["GET", "POST"])
 def index():
     result = None
-    pdf_file = None
-
     if request.method == "POST":
         name = request.form.get("name")
         education = request.form.get("education")
@@ -29,8 +69,7 @@ def index():
         Job Target: {job}
 
         Output:
-        - CV text
-        - Cover letter
+        - CV text with section titles (Education, Skills, Experience, Cover Letter)
         - Job search advice in Rwanda context
         """
 
@@ -41,37 +80,43 @@ def index():
 
         result = response.choices[0].message.content
 
-        # Generate PDF
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.set_font("Arial", '', 12)
-        for line in result.split("\n"):
-            pdf.multi_cell(0, 8, line)
-        # Save PDF to in-memory buffer
-        pdf_buffer = io.BytesIO()
-        pdf.output(pdf_buffer)
-        pdf_buffer.seek(0)
+    return render_template("index.html", result=result)
 
-        # Save buffer in session-like variable (simplest for demo)
-        pdf_file = pdf_buffer
-
-        # Save temporary file path if you prefer file download
-        # pdf.output("cv.pdf")
-
-    return render_template("index.html", result=result, pdf_file=pdf_file)
-
+# PDF download
 @app.route("/download", methods=["POST"])
 def download_pdf():
     content = request.form.get("pdf_content")
-    pdf = FPDF()
+    pdf = ModernCVPDF()
     pdf.add_page()
-    pdf.set_font("Arial", '', 12)
-    for line in content.split("\n"):
-        pdf.multi_cell(0, 8, line)
+
+    # Extract first two lines as name + job title
+    lines = content.split("\n")
+    if len(lines) >= 2:
+        pdf.name_header(lines[0], lines[1])
+        content_body = "\n".join(lines[2:])
+    else:
+        content_body = content
+
+    # Split content into sections
+    sections = content_body.split("\n\n")
+    for sec in sections:
+        sec_lines = sec.strip().split("\n")
+        if len(sec_lines) == 0:
+            continue
+        title = sec_lines[0]
+        body = "\n".join(sec_lines[1:]) if len(sec_lines) > 1 else ""
+        if title.lower() == "skills":
+            skills_list = [s.strip() for s in body.replace("-", ",").split(",")]
+            pdf.section_title(title)
+            pdf.skills_column(skills_list)
+        else:
+            pdf.section_title(title)
+            pdf.section_body(body)
+
     pdf_buffer = io.BytesIO()
     pdf.output(pdf_buffer)
     pdf_buffer.seek(0)
+
     return send_file(
         pdf_buffer,
         as_attachment=True,
